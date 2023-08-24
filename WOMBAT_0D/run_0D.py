@@ -37,19 +37,19 @@ print("seaborn version =", sb.__version__)
 print("matplotlib version =", sys.modules[plt.__package__].__version__)
 print("cmocean version =", sys.modules[cmo.__package__].__version__)
 
-wrkdir = "/Users/buc146/Dropbox/CSIRO/pyWOMBAT/scripts"
+wrkdir = "/Users/buc146/Dropbox/CSIRO/pyWOMBAT/WOMBAT_0D"
 os.chdir(wrkdir)
 
 
 #%% get parameters 
 
 # set timestep
-days = 100                # length of run (days)
+days = 200                # length of run (days)
 dt = 86400.0/6              # timestep (seconds)
 timesteps = days*86400/dt   # total number of timesteps
 save_freq = 1             # frequency of saving output (days) 
 out_freq = save_freq*86400/dt
-conserving = False          # check for conservation of mass?
+conserving = True          # check for conservation of mass?
 restart = False             # initialise from restart file?
 
 # set the dilution rate of the chemostat (/s)
@@ -82,11 +82,11 @@ if restart:
     dic_init = df["DIC"]
 else:
     o2_init  = 200
-    no3_init = 1
+    no3_init = 0.1
     dfe_init = 0.1e-3
-    phy_init = 0.01
-    zoo_init = 0.01
-    det_init = 0.01
+    phy_init = 0.1
+    zoo_init = 0.1
+    det_init = 0.1
     cal_init = 0.1
     alk_init = 2400
     dic_init = 2200
@@ -146,8 +146,8 @@ for t in tqdm(np.arange(timesteps), desc="Running model", unit=' timesteps'):
     
     # set constant sources to chemostat
     i_o2 = 200.0
-    i_no3 = 10.0
-    i_dfe = 0.4e-3
+    i_no3 = 0.1
+    i_dfe = 0.1e-3
     i_phy = 0.0
     i_zoo = 0.0
     i_det = 0.0
