@@ -1,5 +1,7 @@
 # pyWOMBAT
 Here we provide a 1D water column model of the Australian ocean biogeochemical model WOMBAT (World Ocean Model of Biogeochemistry and Trophic-dynamics).
+=======
+Here we provide 0D chemostat and 1D water column models of the Australian ocean biogeochemical model WOMBAT (World Ocean Model of Biogeochemistry and Trophic-dynamics).
 It is written in python and intended for development purposes.
 
 ## Components

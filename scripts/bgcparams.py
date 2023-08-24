@@ -24,7 +24,7 @@ p_odzfac = 3.0
 ###############################
 # Ammox: NH4 --> NO2
 p_muaoa = 0.5 / d2s 
-p_kaoa_nh4 = 0.1
+p_kaoa_nh4 = 0.1    # Martens-Habbena et al. (2009) suggests 134 nM; Liu et al. (2023) shows oligotrophic AOA with K as low as 8-44 nM
 p_paoa_o2 = 293.0 / d2s
 p_yaoa_nh4 = 11.0
 p_yaoa_oxy = 15.5
@@ -37,7 +37,7 @@ p_aoa_qmort = 0.5 / d2s
 ###############################
 # Nitrox: NO2 --> NO3
 p_munob = 1.0 / d2s; 
-p_knob_no2 = 0.1 ;
+p_knob_no2 = 0.1 ;  # Zhang et al. (2020); Xin Sun et al. (2021); Liu et al. (2023) 65-125 nM
 p_pnob_o2 = 71.0 / d2s ;
 p_ynob_no2 = 27.8 ;
 p_ynob_oxy = 12.9 ;
