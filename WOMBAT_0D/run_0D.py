@@ -44,17 +44,17 @@ os.chdir(wrkdir)
 #%% get parameters 
 
 # set timestep
-days = 200                # length of run (days)
+days = 200                  # length of run (days)
 dt = 86400.0/6              # timestep (seconds)
 timesteps = days*86400/dt   # total number of timesteps
 save_freq = 1             # frequency of saving output (days) 
 out_freq = save_freq*86400/dt
-conserving = True          # check for conservation of mass?
+conserving = False          # check for conservation of mass?
 restart = False             # initialise from restart file?
 
 # set the dilution rate of the chemostat (/s)
 #   ... at equilibrium, this is what the phy growth rate will be
-dil = 0.05 / 86400.0    
+dil = 0.02 / 86400.0    
 
 
 #%% initialise tracers
@@ -82,7 +82,7 @@ if restart:
     dic_init = df["DIC"]
 else:
     o2_init  = 200
-    no3_init = 0.1
+    no3_init = 0.5
     dfe_init = 0.1e-3
     phy_init = 0.1
     zoo_init = 0.1
@@ -122,6 +122,32 @@ alk_ts[0] = alk_init
 dic_ts[0] = dic_init
 
 
+#%% set constant sources for chemostat
+
+# set constant sources to chemostat
+i_o2 = 200.0
+i_no3 = 5
+i_dfe = 1.5e-3
+i_phy = 0.0
+i_zoo = 0.0
+i_det = 0.0
+i_cal = 0.0
+i_alk = 2400.0
+i_dic = 2200.0
+
+print(" ")
+print("maximum supply of resources per day")
+print("O2 = %.2f µM"%(i_o2*dil*86400))
+print("NO3 = %.2f µM"%(i_no3*dil*86400))
+print("dFe = %.2f nM"%(i_dfe*dil*86400*1e3))
+print("Phy = %.2f µM"%(i_phy*dil*86400))
+print("Zoo = %.2f µM"%(i_zoo*dil*86400))
+print("Det = %.2f µM"%(i_det*dil*86400))
+print("Cal = %.2f µM"%(i_cal*dil*86400))
+print("Alk = %.2f µM"%(i_alk*dil*86400))
+print("DIC = %.2f µM"%(i_dic*dil*86400))
+
+
 #%% run model
 
 from tqdm import tqdm
@@ -143,17 +169,6 @@ if conserving:
 # integrate forward
 ii = 0
 for t in tqdm(np.arange(timesteps), desc="Running model", unit=' timesteps'): 
-    
-    # set constant sources to chemostat
-    i_o2 = 200.0
-    i_no3 = 0.1
-    i_dfe = 0.1e-3
-    i_phy = 0.0
-    i_zoo = 0.0
-    i_det = 0.0
-    i_cal = 0.0
-    i_alk = 2400.0
-    i_dic = 2200.0
     
     # get sources minus sinks
     sms = bgc_sms(dil, \
@@ -217,10 +232,10 @@ for t in tqdm(np.arange(timesteps), desc="Running model", unit=' timesteps'):
         if nerr == 1:
             print("Nitrogen not conserved at timestep %i"%(t))
             break
-    else:
-        if cerr == 0 and ferr == 0 and nerr == 0:
-            print("Arrived at steady state")
-            break
+    #else:
+    #    if cerr == 0 and ferr == 0 and nerr == 0:
+    #        print("Arrived at steady state")
+    #        break
     
     
     # old becomes new
@@ -241,7 +256,10 @@ sms = bgc_sms(dil, \
               i_o2, i_no3, i_dfe, i_phy, i_zoo, i_det, i_cal, i_alk, i_dic, \
               conserving)
     
-#phy_nh4upt = sms[-17] * 86400
+phy_mu = sms[-4] * 86400
+zoo_mu = sms[-3] * 86400
+phy_lm = sms[-2] * 86400
+phy_qm = sms[-1] * 86400
 
 # save the output to file
 data = {"O2":o2[1],
@@ -267,6 +285,16 @@ tot_n1 = no3[1] + phy[1] + zoo[1] + det[1]
          
 print("total N before =",np.sum(tot_n0))
 print("total N after =",np.sum(tot_n1))
+
+
+#%% find Z* and P*
+
+Zstar = (phy*phy_mu - phy_lm - phy_qm)/zoo_mu
+Pstar1= (-(phy_mu + phy_lm) + np.sqrt((phy_mu+phy_lm)**2 + 4*phy_qm*zoo_mu*zoo))/(2*phy_qm)
+Pstar2= (-(phy_mu + phy_lm) - np.sqrt((phy_mu+phy_lm)**2 + 4*phy_qm*zoo_mu*zoo))/(2*phy_qm)
+
+print("Z* = %.5f µM"%(Zstar[1]))
+print("P* = %.5f µM or %.5f µM"%(Pstar1[1], Pstar2[1]))
 
 
 #%% plot some output 

@@ -76,7 +76,7 @@ def bgc_sms(dil,\
     p_kphy_no3 = 0.7            # µM
     p_kphy_dfe = 0.1e-3         # µM
     p_phy_lmort = 0.04 / d2s    # linear mortality of phytoplankton (/s)
-    p_phy_qmort = 0.25 / d2s    # quadratic mortality of phytoplankton (1 / µM N / s)
+    p_phy_qmort = 0.25 / d2s    # quadratic mortality of phytoplankton (1 / (µM N * s))
     p_phy_CN = 106.0/16.0       # mol/mol
     p_phy_FeC = 7.1e-5          # mol/mol (based on Fe:P of 0.0075:1 (Moore et al 2015))
     p_phy_O2C = 172.0/106.0     # mol/mol
@@ -84,8 +84,8 @@ def bgc_sms(dil,\
     ####### Zooplannkton  ####
     ##########################
     p_zoo_grz = 1.575           # scaler for rate of zooplankton grazing
-    p_zoo_capture = 1.6 / d2s   # prey capture rate of zooplankton (1 / µM N / s)
-    p_zoo_qmort = 0.34 / d2s    # quadratic mortality of zooplankton (1 / µM N / s)
+    p_zoo_capcoef = 1.6 / d2s   # prey capture efficiency coefficient (m6 / (µM N)2 * s))
+    p_zoo_qmort = 0.34 / d2s    # quadratic mortality of zooplankton (1 / (µM N * s))
     p_zoo_excre = 0.01 / d2s    # rate of excretion by zooplankton (/s)
     p_zoo_assim = 0.925         # zooplankton assimilation efficiency
     ######################
@@ -112,7 +112,7 @@ def bgc_sms(dil,\
     # 1.2 Calculate the temperature-dependent maximum growth rate (/s)
     phy_mumax = Tfunc_auto * 1
     # 1.3 Calculate growth limitation by light
-    phy_lpar = 1.0 - np.exp( (-1.0 * p_alpha * par) / phy_mumax ) 
+    phy_lpar = 1.0 - np.exp( (-p_alpha * par) / phy_mumax ) 
     # 1.4 Calculate and apply nutrient limitation terms
     phy_lno3 = no3/(no3+p_kphy_no3)
     phy_ldfe = dfe/(dfe+p_kphy_dfe)
@@ -130,12 +130,13 @@ def bgc_sms(dil,\
     #----------------------------------------------------------------------
     # 1.1 Calculate temperature-dependent maximum grazing rate
     zoo_mumax = p_zoo_grz * Tfunc_hete
-    # 1.2 Calculate prey capture function (µM N-phy / s)
-    zoo_capt = p_zoo_capture * phy * phy 
+    # 1.2 Calculate prey capture rate function (/s)
+    zoo_capt = p_zoo_capcoef * phy * phy 
     # 1.3 Calculate the realised grazing rate of zooplankton
-    zoo_mu = zoo_mumax * zoo_capt / (zoo_mumax + zoo_capt)  
-        # Type II functional form reflects handling time?
-        # This grazing treatment strongly penalizes zooplankton
+    zoo_mu = zoo_mumax * zoo_capt / (zoo_mumax + zoo_capt)
+        # The functional form of grazing creates increasing half-saturation 
+        # values as maximum growth rates increase. It ensures that zooplankton
+        # always have the same affinity for phytoplankton irrespective of temp
     # 1.4 Collect terms
     zoo_phygrz = zoo_mu * zoo                                               # f21
     zoo_zooexc = zoo * p_zoo_excre * Tfunc_hete                             # f31
@@ -196,5 +197,6 @@ def bgc_sms(dil,\
     
     return [ddt_o2, ddt_no3, ddt_dfe, \
             ddt_phy, ddt_zoo, ddt_det, \
-            ddt_cal, ddt_alk, ddt_dic]
+            ddt_cal, ddt_alk, ddt_dic, \
+            phy_mu, zoo_mu, phy_lmort, phy_qmort]
              
