@@ -45,12 +45,12 @@ else:
 # Choose constant (=0) or depth-dependent (=1) upwelling velocity
 # depth-dependent velocity requires a forcing file (set in z_d_initialize_DepParam.m)
 z_depthvar_wup = 0 
-z_wup_param = 3.171e-07 * 3    # 1.8395e-7 # m/s  # note: 10 m/y = 3.1710e-07 m/s
+z_wup_param = 3.171e-07 * 1    # 1.8395e-7 # m/s  # note: 10 m/y = 3.1710e-07 m/s
 
 # Get upwelling profile by applying a spline to the model output w(z) profile
 if z_depthvar_wup == 1: 
-   dep = np.genfromtxt('/Users/pbuchanan/Dropbox/PostDoc/ROMS/ROMS_1D_python/vertical_CESM_depth.txt')
-   vel = -np.genfromtxt('/Users/pbuchanan/Dropbox/PostDoc/ROMS/ROMS_1D_python/vertical_CESM_wvelETSP.txt')
+   dep = np.genfromtxt('vertical_CESM_depth.txt')
+   vel = -np.genfromtxt('vertical_CESM_wvelETSP.txt')
    tdepth = -np.abs(dep)
    wupfcn = interp1d(tdepth,vel)
    z_wup = wupfcn(z_zgrid)/100.0 # convert to m/s
