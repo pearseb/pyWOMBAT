@@ -27,6 +27,8 @@ t_alk_top  = 2200              	# Bry cond. for surface Alk       (mmolC/m3)
 t_alk_bot  = 2400         		# Bry cond. for deep Alk          (mmolC/m3)
 t_dic_top  = 2000              	# Bry cond. for surface DIC       (mmolC/m3)
 t_dic_bot  = 2200         		# Bry cond. for deep DIC          (mmolC/m3)
+t_chl_top  = 0.1              	# Bry cond. for surface Chl       (mg/m3)
+t_chl_bot  = 0.0         		# Bry cond. for deep Chl          (mg/m3)
 
 
 
