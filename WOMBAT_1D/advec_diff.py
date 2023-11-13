@@ -14,10 +14,10 @@ def advec_diff(dt, tra, tra_top, tra_bot, z_dz, z_wup, z_Kv):
     # For advection velocity and diffusion coefficient fixed in time, calculate here
     # terms for the numerical advection-diffusion solver. For time-dependent w and Kv
     # move these terms inside the time loop
-    alpha = z_wup[1:-1] * dt / (2*z_dz)
-    beta  = - dt / (2*z_dz) * (z_wup[0:-2] - z_wup[2::])
-    gamma = z_Kv[1:-1] * dt / (z_dz)**2
-    delta =   dt / (4*z_dz) * (z_Kv[0:-2] - z_Kv[2::])
+    alpha = z_wup[0:-1] * dt / (2*z_dz)
+    beta  = - dt / (2*z_dz) * (z_wup[0:-1] - z_wup[1::])
+    gamma = z_Kv[0:-1] * dt / (z_dz)**2
+    delta =   dt / (4*z_dz) * (z_Kv[0:-1] - z_Kv[1::])
     
     # Integration coefficients for the tracer at k,k+1,k-1 vertical levels:
     coeff1 = 1 + beta - 2 * gamma
@@ -26,12 +26,12 @@ def advec_diff(dt, tra, tra_top, tra_bot, z_dz, z_wup, z_Kv):
     
     #### Now calculate Explicit tracer concentrations
     #### Top boundary conditions
-    tra[1, 0] = tra_top
+    #tra[1, 0] = tra_top
     #### Bottom boundary conditions
     tra[1,-1] = tra_bot
     
     #### advection and diffusion
-    tra[1,1:-1] = tra[0,1:-1] * coeff1 + tra[0,2::] * coeff2 + tra[0,0:-2] * coeff3
+    tra[1,0:-1] = tra[0,0:-1] * coeff1 + tra[0,1::] * coeff2 + tra[0,0:-1] * coeff3
     
     return tra
 

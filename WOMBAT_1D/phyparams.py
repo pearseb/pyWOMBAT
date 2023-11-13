@@ -31,7 +31,7 @@ z_Kv_bot = 1.00 * 2.0 * 1.701e-5
 z_Kv_flex = -250
 z_Kv_width = 300
 z_mld = 50  # Mixed layer depth
-z_tmld = 1.0/86400.0 # timescale to fully mix the MLD (once per day recommended)
+z_tmld = 1.0/(86400.0*1) # timescale to fully mix the MLD (once per day recommended)
 
 if z_depthvar_Kv == 1:
     z_Kv = 0.5*(z_Kv_top + z_Kv_bot) + 0.5*(z_Kv_top - z_Kv_bot) * np.tanh((z_zgrid - z_Kv_flex)/(0.5*z_Kv_width))
