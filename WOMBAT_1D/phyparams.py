@@ -45,7 +45,7 @@ else:
 # Choose constant (=0) or depth-dependent (=1) upwelling velocity
 # depth-dependent velocity requires a forcing file (set in z_d_initialize_DepParam.m)
 z_depthvar_wup = 0 
-z_wup_param = 3.171e-07 * 1    # 1.8395e-7 # m/s  # note: 10 m/y = 3.1710e-07 m/s
+z_wup_param = 3.171e-07 * 0.05    # 1.8395e-7 # m/s  # note: 10 m/y = 3.1710e-07 m/s
 
 # Get upwelling profile by applying a spline to the model output w(z) profile
 if z_depthvar_wup == 1: 
